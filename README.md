@@ -6,4 +6,4 @@ Contains source codes for Framework.dll. I will try to move more compiler functi
 
 ## Compiler
 
-No sources available (yet, this will probably change after code refactoring). Compiler available at smp.if.uj.edu.pl/~mkol/il2js_release/ .
+No sources available (yet, this will probably change after code refactoring). Compiler available at http://smp.if.uj.edu.pl/~mkol/il2js_release/ .
