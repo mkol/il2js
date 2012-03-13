@@ -1,0 +1,785 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="Mapping.xsl"?>
+<mapping xmlns="http://smp.if.uj.edu.pl/~mkol/il2js/Mapping.xsd">
+	<assembly name="System" fullName="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+	<assembly name="System.Drawing" fullName="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+	<namespace name="System">
+		<namespace name="Text">
+			<!-- simple array based implementation -->
+			<type name="StringBuilder">
+				<constructor>
+					<parameters/>
+					<javascript>
+						<code><![CDATA[
+function(_){
+  _=[];
+  _.toString=_.join.curry('');
+  return _;
+}
+]]>
+            </code>
+					</javascript>
+				</constructor>
+				<method name="Append">
+					<parameters>
+						<type name="String"/>
+					</parameters>
+					<javascript>
+						<code syntax="static">$0.push($1),$0</code>
+					</javascript>
+				</method>
+				<method name="Append">
+					<parameters>
+						<type name="Byte"/>
+					</parameters>
+					<javascript>
+						<code syntax="static">$0.push($1),$0</code>
+					</javascript>
+				</method>
+				<method name="Append">
+					<parameters>
+						<type name="Int32"/>
+					</parameters>
+					<javascript>
+						<code syntax="static">$0.push($1),$0</code>
+					</javascript>
+				</method>
+				<method name="Append">
+					<parameters>
+						<type name="Double"/>
+					</parameters>
+					<javascript>
+						<code syntax="static">$0.push($1),$0</code>
+					</javascript>
+				</method>
+			</type>
+		</namespace>
+		<namespace name="Drawing" assembly="System.Drawing">
+			<type name="Color">
+				<method name="FromArgb">
+					<parameters>
+						<type name="Int32"/>
+						<type name="Int32"/>
+						<type name="Int32"/>
+					</parameters>
+					<javascript prototype_js="true">
+						<code>"#"+$A($*).invoke('toColorPart').join('')</code>
+					</javascript>
+				</method>
+				<method name="FromArgb">
+					<parameters>
+						<type name="Int32"/>
+					</parameters>
+					<javascript>
+						<code><![CDATA["#"+(($0&0xff0000)>>16).toColorPart()+(($0&0xff00)>>8).toColorPart()+($0&0xff).toColorPart()]]></code>
+					</javascript>
+				</method>
+			</type>
+		</namespace>
+		<type name="Object">
+			<constructor>
+				<parameters/>
+				<javascript>
+					<code>{}</code>
+				</javascript>
+			</constructor>
+			<method name="ToString">
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+		</type>
+		<type name="DateTime">
+			<constructor>
+				<parameters>
+					<type name="Int64"/>
+				</parameters>
+				<javascript>
+					<method name="Date"/>
+				</javascript>
+			</constructor>
+			<property name="Now">
+				<get>
+					<javascript>
+						<code>new Date()</code>
+					</javascript>
+				</get>
+			</property>
+			<property name="Ticks">
+				<get>
+					<javascript>
+						<method name="getTime"/>
+					</javascript>
+				</get>
+			</property>
+			<method name="ToLongDateString">
+				<javascript>
+					<method name="toGMTString"/>
+				</javascript>
+			</method>
+		</type>
+		<type name="Char">
+			<method name="ToString">
+				<parameters/>
+				<javascript>
+					<code>String.fromCharCode(this)</code>
+				</javascript>
+			</method>
+			<method name="IsWhiteSpace">
+				<parameters>
+					<type name="Char"/>
+				</parameters>
+				<javascript>
+					<code>/\s/.test(String.fromCharCode($0))</code>
+				</javascript>
+			</method>
+		</type>
+		<type name="Math">
+			<method name="Sin">
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+			<method name="Cos">
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+			<method name="Ceiling">
+				<parameters>
+					<type name="Double"/>
+				</parameters>
+				<javascript>
+					<method name="ceil"/>
+				</javascript>
+			</method>
+			<method name="Max">
+				<parameters>
+					<type name="Int32"/>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+			<method name="Min">
+				<parameters>
+					<type name="Int32"/>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+		</type>
+		<type name="String">
+			<method name="Contains">
+				<parameters>
+					<type name="String"/>
+				</parameters>
+				<javascript prototype_js="true">
+					<method name="include"/>
+				</javascript>
+			</method>
+			<method name="Split">
+				<parameters>
+					<type name="Char[]"/>
+				</parameters>
+				<javascript>
+					<!--#warning All but first characters ignored.-->
+					<code>this.split(String.fromCharCode($0[0]))</code>
+				</javascript>
+			</method>
+			<method name="Split">
+				<parameters>
+					<type name="String[]"/>
+					<type name="StringSplitOptions"/>
+				</parameters>
+				<javascript>
+					<!--#warning All but first characters ignored. StringSplitOptions argument ignored.-->
+					<code>this.split($0[0])</code>
+				</javascript>
+			</method>
+			<method name="Join">
+				<parameters>
+					<type name="String"/>
+					<type name="String[]"/>
+				</parameters>
+				<javascript>
+					<code>$1.join($0)</code>
+				</javascript>
+			</method>
+			<method name="Replace">
+				<parameters>
+					<type name="String"/>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+			<method name="Format">
+				<parameters>
+					<type name="String"/>
+					<type name="Object"/>
+				</parameters>
+				<javascript>
+					<code>$0.replace("{0}",$1)</code>
+				</javascript>
+			</method>
+			<method name="Format">
+				<parameters>
+					<type name="String"/>
+					<type name="Object[]"/>
+				</parameters>
+				<javascript>
+					<code>
+						<![CDATA[
+function(a,b){
+	return a.replace(
+		/{([0-9])+}/g,
+		function(c,d){
+			return b[d]
+		}
+	)
+}
+]]>
+					</code>
+				</javascript>
+			</method>
+			<method name="StartsWith">
+				<parameters>
+					<type name="String"/>
+				</parameters>
+				<javascript prototype_js="true">
+					<method/>
+				</javascript>
+			</method>
+			<method name="EndsWith">
+				<parameters>
+					<type name="String"/>
+				</parameters>
+				<javascript prototype_js="true">
+					<method/>
+				</javascript>
+			</method>
+			<method name="IndexOf">
+				<parameters>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+			<method name="IndexOf">
+				<parameters>
+					<type name="String"/>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+			<method name="IndexOf">
+				<parameters>
+					<type name="Char"/>
+				</parameters>
+				<javascript>
+					<code>this.indexOf(String.fromCharCode($0))</code>
+				</javascript>
+			</method>
+			<method name="IndexOf">
+				<parameters>
+					<type name="Char"/>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<code>this.indexOf(String.fromCharCode($0),$1)</code>
+				</javascript>
+			</method>
+			<method name="ToLower">
+				<parameters/>
+				<javascript>
+					<method name="toLowerCase"/>
+				</javascript>
+			</method>
+			<method name="ToUpper">
+				<parameters/>
+				<javascript>
+					<method name="toUpperCase"/>
+				</javascript>
+			</method>
+			<method name="Substring">
+				<parameters>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<method/>
+				</javascript>
+			</method>
+			<method name="CompareTo">
+				<parameters>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<method name="localeCompare"/>
+				</javascript>
+			</method>
+			<method name="Substring">
+				<parameters>
+					<type name="Int32"/>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<method name="substr"/>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="String[]"/>
+				</parameters>
+				<javascript>
+					<code>$0.join('')</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="Object[]"/>
+				</parameters>
+				<javascript>
+					<code>$0.join('')</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="String"/>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<code>$0+$1</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="String"/>
+					<type name="String"/>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<code>$0+$1+$2</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="String"/>
+					<type name="String"/>
+					<type name="String"/>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<code>$0+$1+$2+$3</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="Object"/>
+				</parameters>
+				<javascript>
+					<code>String($0)</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="Object"/>
+					<type name="Object"/>
+				</parameters>
+				<javascript>
+					<code>String($0)+String($1)</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="Object"/>
+					<type name="Object"/>
+					<type name="Object"/>
+				</parameters>
+				<javascript>
+					<code>String($0)+String($1)+String($2)</code>
+				</javascript>
+			</method>
+			<method name="Concat">
+				<parameters>
+					<type name="Object"/>
+					<type name="Object"/>
+					<type name="Object"/>
+					<type name="Object"/>
+				</parameters>
+				<javascript>
+					<code>String($0)+String($1)+String($2)+String($3)</code>
+				</javascript>
+			</method>
+			<method name="Remove">
+				<parameters>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<code>this.substring(0,$0)</code>
+				</javascript>
+			</method>
+			<method name="Remove">
+				<parameters>
+					<type name="Int32"/>
+					<type name="Int32"/>
+				</parameters>
+				<javascript>
+					<code>this.substring(0,$0)+this.substring($0+$1)</code>
+				</javascript>
+			</method>
+			<operator name="Inequality">
+				<javascript>
+					<code>$0!=$1</code>
+				</javascript>
+			</operator>
+			<operator name="Equality">
+				<javascript>
+					<code>$0==$1</code>
+				</javascript>
+			</operator>
+			<property name="Chars">
+				<get>
+					<javascript>
+						<method name="charCodeAt"/>
+					</javascript>
+				</get>
+			</property>
+			<property name="Length">
+				<get>
+					<javascript>
+						<opCode value="Ldlen"/>
+					</javascript>
+				</get>
+			</property>
+		</type>
+		<!--warning-->
+		<type name="IDisposable">
+			<method name="Dispose">
+				<javascript>
+					<opCode value="Pop"/>
+				</javascript>
+			</method>
+		</type>
+		<namespace name="Collections">
+			<namespace name="Generic">
+				<type name="List`1">
+					<constructor>
+						<parameters/>
+						<javascript>
+							<code>[]</code>
+						</javascript>
+					</constructor>
+					<method name="Add">
+						<javascript>
+							<method name="push"/>
+						</javascript>
+					</method>
+					<method name="Clear">
+						<javascript prototype_js="true">
+							<method/>
+						</javascript>
+					</method>
+					<method name="ToArray">
+						<javascript>
+							<ignore/>
+						</javascript>
+					</method>
+					<method name="Remove">
+						<javascript>
+							<code>
+								<![CDATA[
+function(b,i,t){
+	t=this;
+	for(i=t.indexOf(b)+1;i<t.length;++i)
+		t[i-1]=t[i];
+	--t.length
+}
+]]>
+							</code>
+						</javascript>
+					</method>
+					<method name="RemoveAt">
+						<javascript>
+							<code>
+								<![CDATA[
+function(a,b){
+	b=this;
+	for(++a;a<b.length;++a)
+		b[a-1]=b[a];
+	--b.length
+}
+								]]>
+							</code>
+						</javascript>
+					</method>
+					<property name="Item">
+						<get>
+							<javascript>
+								<opCode value="Ldelem"/>
+							</javascript>
+						</get>
+						<set>
+							<javascript>
+								<opCode value="Stelem"/>
+							</javascript>
+						</set>
+					</property>
+					<property name="Count">
+						<get>
+							<javascript>
+								<opCode value="Ldlen"/>
+							</javascript>
+						</get>
+					</property>
+				</type>
+				<!--Note: Dictionary<K,V> is translated to Dictionary<string,V> in JS.-->
+				<type name="Dictionary`2">
+					<constructor>
+						<parameters/>
+						<javascript>
+							<code>{}</code>
+						</javascript>
+					</constructor>
+					<constructor>
+						<parameters>
+							<type name="Int32"/>
+						</parameters>
+						<javascript>
+							<code>{}</code>
+						</javascript>
+					</constructor>
+					<method name="ContainsKey">
+						<javascript>
+							<code>$0 in this</code>
+						</javascript>
+					</method>
+					<method name="Add">
+						<javascript>
+							<opCode value="Stelem"/>
+						</javascript>
+					</method>
+					<method name="Remove">
+						<javascript>
+							<code>
+								<![CDATA[
+function(a){
+	if(a in this){
+		delete this[a];
+		return true;
+	}
+	return false;
+}
+]]>
+							</code>
+						</javascript>
+					</method>
+					<property name="Keys">
+						<get>
+							<javascript prototype_js="true">
+								<code>Object.keys(this)</code>
+							</javascript>
+						</get>
+					</property>
+					<property name="Values">
+						<get>
+							<javascript prototype_js="true">
+								<code>Object.values(this)</code>
+							</javascript>
+						</get>
+					</property>
+					<property name="Item">
+						<get>
+							<javascript>
+								<opCode value="Ldelem"/>
+							</javascript>
+						</get>
+						<set>
+							<javascript>
+								<opCode value="Stelem"/>
+							</javascript>
+						</set>
+					</property>
+				</type>
+				<type name="Stack`1" assembly="System">
+					<constructor>
+						<parameters/>
+						<javascript>
+							<code>[]</code>
+						</javascript>
+					</constructor>
+					<method name="Push">
+						<javascript>
+							<method/>
+						</javascript>
+					</method>
+					<method name="Pop">
+						<javascript>
+							<method/>
+						</javascript>
+					</method>
+					<method name="Peek">
+						<javascript prototype_js="true">
+							<method name="last"/>
+						</javascript>
+					</method>
+					<method name="ToArray">
+						<javascript>
+							<ignore/>
+						</javascript>
+					</method>
+					<property name="Count">
+						<get>
+							<javascript>
+								<opCode value="Ldlen"/>
+							</javascript>
+						</get>
+					</property>
+				</type>
+			</namespace>
+		</namespace>
+		<!--Partial support for regular expressions engine.-->
+		<namespace name="Text.RegularExpressions" assembly="System">
+			<type name="Regex">
+				<constructor>
+					<parameters>
+						<type name="String"/>
+					</parameters>
+					<javascript>
+						<method name="RegExp"/>
+					</javascript>
+				</constructor>
+				<method name="IsMatch">
+					<parameters>
+						<type name="String"/>
+					</parameters>
+					<javascript>
+						<method name="test"/>
+					</javascript>
+				</method>
+				<method name="Match">
+					<parameters>
+						<type name="String"/>
+					</parameters>
+					<javascript>
+						<!--Node: Capture is mapped to JS::String-->
+						<code syntax="static">
+							<![CDATA[
+function(a,b){
+	if((b=a.exec(b))!=null){
+		a=new String(b[0]);
+		a.g=b;
+		return a;
+	}
+	return {};
+}
+]]>
+						</code>
+					</javascript>
+				</method>
+			</type>
+			<type name="Match">
+				<property name="Groups">
+					<get>
+						<javascript>
+							<code>this.g</code>
+						</javascript>
+					</get>
+				</property>
+			</type>
+			<type name="GroupCollection">
+				<property name="Item">
+					<parameters>
+						<type name="Int32"/>
+					</parameters>
+					<get>
+						<javascript>
+							<opCode value="Ldelem"/>
+						</javascript>
+					</get>
+				</property>
+			</type>
+			<type name="Capture">
+				<!--Note: in JavaSctipt this throws exception if !Success.-->
+				<property name="Length">
+					<get>
+						<javascript>
+							<opCode value="Ldlen"/>
+						</javascript>
+					</get>
+				</property>
+				<property name="Value">
+					<get>
+						<javascript>
+							<ignore/>
+						</javascript>
+					</get>
+				</property>
+			</type>
+			<type name="Group">
+				<property name="Success">
+					<get>
+						<javascript>
+							<code>
+								this.g
+							</code>
+						</javascript>
+					</get>
+				</property>
+			</type>
+		</namespace>
+		<type name="NotSupportedException">
+			<constructor>
+				<parameters>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<method name="Error"/>
+				</javascript>
+			</constructor>
+			<constructor>
+				<parameters/>
+				<javascript>
+					<method name="Error"/>
+				</javascript>
+			</constructor>
+			<property name="Message">
+				<get>
+					<javascript>
+						<code>this.message</code>
+					</javascript>
+				</get>
+			</property>
+		</type>
+		<type name="Exception">
+			<constructor>
+				<parameters>
+					<type name="String"/>
+				</parameters>
+				<javascript>
+					<method name="Error"/>
+				</javascript>
+			</constructor>
+			<constructor>
+				<parameters/>
+				<javascript>
+					<method name="Error"/>
+				</javascript>
+			</constructor>
+			<property name="Message">
+				<get>
+					<javascript>
+						<code>this.message</code>
+					</javascript>
+				</get>
+			</property>
+		</type>
+	</namespace>
+</mapping>

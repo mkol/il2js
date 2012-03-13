@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Mapping"
+    targetNamespace="http://smp.if.uj.edu.pl/~mkol/il2js/Mapping.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://smp.if.uj.edu.pl/~mkol/il2js/Mapping.xsd"
+    xmlns:mstns="http://smp.if.uj.edu.pl/~mkol/il2js/Mapping.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+	<xs:simpleType name="OpCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Or"/>
+			<xs:enumeration value="And"/>
+			<xs:enumeration value="Ret"/>
+			<xs:enumeration value="Rem"/>
+			<xs:enumeration value="Add"/>
+			<xs:enumeration value="Div"/>
+			<xs:enumeration value="Mul"/>
+			<xs:enumeration value="Sub"/>
+			<xs:enumeration value="Xor"/>
+			<xs:enumeration value="Ldlen"/>
+			<xs:enumeration value="Pop"/>
+			<xs:enumeration value="Dup"/>
+			<xs:enumeration value="Ceq"/>
+			<xs:enumeration value="Clt"/>
+			<xs:enumeration value="Cgt"/>
+			<xs:enumeration value="Ldnull"/>
+			<xs:enumeration value="Throw"/>
+
+			<xs:enumeration value="Ldelem"/>
+			<xs:enumeration value="Stelem"/>
+
+			<xs:enumeration value="Sleep"/>
+
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CallType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="instance">
+				<xs:annotation>
+					<xs:documentation>
+						Method will be called using instance syntax (varible.method()). Useful for extension methods.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="static">
+				<xs:annotation>
+					<xs:documentation>
+						Method will be called using static call syntax (method(varible)).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="TypeArray">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="type">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>
+								The assembly-qualified name of the type.
+								(See MSDN help for Type::GetType Method.)
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PropertyAccessor">
+		<xs:sequence>
+			<xs:element ref="javascript"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="javascript">
+		<xs:annotation>
+			<xs:documentation>
+				Tells compiler how to handle this member at client side in JavaScript.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element name="ignore">
+						<xs:annotation>
+							<xs:documentation>
+								No code will be generated for this member.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:complexType/>
+					</xs:element>
+					<xs:element name="method">
+						<xs:annotation>
+							<xs:documentation>
+								JavaScript method will be called for this member.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:attribute name="name" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>
+										If name is not provided - lower case started name of method (or original type name in case of constructors) will be used.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="syntax" type="CallType"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="opCode">
+						<xs:complexType>
+							<xs:attribute name="value" type="OpCode" use="required"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="code">
+						<xs:annotation>
+							<xs:documentation>
+								Function definition (example: ``function(a){return this+a;}'') or function body (example: ``this+$0''). Each line of code will be trimmed, and lines will be joinded into one. In case of function body - use ``$*'',``$0'',``$1'',... as placeholder for parameters (``$*'' will be converted to ``arguments'' and ``$i'' will be converted to ``arguments[i]'').
+							</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="xs:string">
+									<xs:attribute name="syntax" type="CallType"/>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:element name="additionalCode" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Additional code that makes possible to call this member. During compilation, each line of this code will be trimmed, and lines will be joined into one. So don't use construction like
+							<![CDATA[
+							if(a)b=c
+							else d=e
+							]]>
+							(no ``{}'' for blocks and ``;'' at the end of statements).
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="prototype_js" type="xs:boolean" default="false">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates if this member's call requires usage of prototype.js library. Since whole framework uses prototype.js, this attribute has no meaning for compilation, but it's reserved for future usage (and to honor author of prototype.js, when we explicit use it's library in transtation .NET->JavaScript).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:element name="mapping">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="assembly" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="name" type="xs:string" use="required"/>
+						<xs:attribute name="fullName" type="xs:string" use="required">
+							<xs:annotation>
+								<xs:documentation>
+									The long form of the assembly name.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="namespace" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="namespace">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="namespace"/>
+				<xs:element name="type">
+					<xs:complexType>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="constructor">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="parameters" type="TypeArray"/>
+										<xs:element ref="javascript"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="property">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="parameters" type="TypeArray" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>
+													You don't have to specify parameters, if there is only one property with given name.
+												</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="get" type="PropertyAccessor" minOccurs="0"/>
+										<xs:element name="set" type="PropertyAccessor" minOccurs="0"/>
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="method">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="parameters" type="TypeArray" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>
+													You don't have to specify parameters, if there is only one method with given name.
+												</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element ref="javascript"/>
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="operator">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="parameters" type="TypeArray" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>
+													You don't have to specify parameters, if there is only one operator with given name.
+												</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element ref="javascript"/>
+									</xs:sequence>
+									<xs:attribute name="name" use="required">
+										<xs:annotation>
+											<xs:documentation>
+												Name of operator (list based on Ecma-355.pdf).
+											</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<!--unary-->
+												<xs:enumeration value="Decrement"/>
+												<xs:enumeration value="Increment"/>
+												<xs:enumeration value="UnaryNegation"/>
+												<xs:enumeration value="UnaryPlus"/>
+												<xs:enumeration value="LogicalNot"/>
+												<xs:enumeration value="True"/>
+												<xs:enumeration value="False"/>
+												<xs:enumeration value="AddressOf"/>
+												<xs:enumeration value="OnesComplement"/>
+												<xs:enumeration value="PointerDereference"/>
+												<!--binary-->
+												<xs:enumeration value="Addition"/>
+												<xs:enumeration value="Subtraction"/>
+												<xs:enumeration value="Multiply"/>
+												<xs:enumeration value="Division"/>
+												<xs:enumeration value="Modulus"/>
+												<xs:enumeration value="ExclusiveOr"/>
+												<xs:enumeration value="BitwiseAnd"/>
+												<xs:enumeration value="BitwiseOr"/>
+												<xs:enumeration value="LogicalAnd"/>
+												<xs:enumeration value="LogicalOr"/>
+												<xs:enumeration value="Assign"/>
+												<xs:enumeration value="LeftShift"/>
+												<xs:enumeration value="RightShift"/>
+												<xs:enumeration value="SignedRightShift"/>
+												<xs:enumeration value="UnsignedRightShift"/>
+												<xs:enumeration value="Equality"/>
+												<xs:enumeration value="GreaterThan"/>
+												<xs:enumeration value="LessThan"/>
+												<xs:enumeration value="Inequality"/>
+												<xs:enumeration value="GreaterThanOrEqual"/>
+												<xs:enumeration value="LessThanOrEqual"/>
+												<xs:enumeration value="UnsignedRightShiftAssignment"/>
+												<xs:enumeration value="MemberSelection"/>
+												<xs:enumeration value="RightShiftAssignment"/>
+												<xs:enumeration value="MultiplicationAssignment"/>
+												<xs:enumeration value="PointerToMemberSelection"/>
+												<xs:enumeration value="SubtractionAssignment"/>
+												<xs:enumeration value="ExclusiveOrAssignment"/>
+												<xs:enumeration value="LeftShiftAssignment"/>
+												<xs:enumeration value="ModulusAssignment"/>
+												<xs:enumeration value="AdditionAssignment"/>
+												<xs:enumeration value="BitwiseAndAssignment"/>
+												<xs:enumeration value="BitwiseOrAssignment"/>
+												<xs:enumeration value="Comma"/>
+												<xs:enumeration value="DivisionAssignment"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+
+						</xs:choice>
+						<xs:attribute name="name" type="xs:string" use="required">
+							<xs:annotation>
+								<xs:documentation>
+									Name of type.
+									It will be concat with parent namespace name.
+									(See MSDN help for Type::GetType Method.)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="assembly" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>
+									The long form of the assembly name (or name defined in mapping assemblies).
+									Must be set when type is not in Mscorlib.dll.
+									If present, it overrides ancestor namespace assembly.
+									(See MSDN help for Type::GetType Method.)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:attribute name="name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>
+						Name of namespace.
+						It will be concat with parent namespace name.
+						(See MSDN help for Type::GetType Method.)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="assembly" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>
+						The long form of the assembly name (or name defined in mapping assemblies).
+						Must be set when types in namespace are not in Mscorlib.dll.
+						If present, it overrides ancestor namespace assembly.
+						(See MSDN help for Type::GetType Method.)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

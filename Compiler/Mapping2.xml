@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mapping xmlns="http://smp.if.uj.edu.pl/~mkol/il2js/Mapping.xsd">
+	<assembly name="System.Core" fullName="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+	<namespace name="System">
+		<type name="Int32">
+			<method name="TryParse">
+				<parameters>
+					<type name="String"/>
+					<type name="Int32&amp;"/>
+				</parameters>
+				<javascript>
+					<code>
+						<![CDATA[
+function(a,b){
+	$set$(b,a=parseInt(a));
+	return !isNaN(a);
+}
+]]>
+					</code>
+				</javascript>
+			</method>
+		</type>
+		<type name="Byte">
+			<method name="TryParse">
+				<parameters>
+					<type name="String"/>
+					<type name="Byte&amp;"/>
+				</parameters>
+				<javascript>
+					<code>
+						<![CDATA[
+function(a,b){
+	$set$(b,a=parseInt(a));
+	return !isNaN(a)&&0<=a&&a<256;
+}
+]]>
+					</code>
+				</javascript>
+			</method>
+		</type>
+		<type name="Double">
+			<method name="TryParse">
+				<parameters>
+					<type name="String"/>
+					<type name="Double&amp;"/>
+				</parameters>
+				<javascript>
+					<code>
+						<![CDATA[
+function(a,b){
+	$set$(b,a=parseFloat(a));
+	return !isNaN(a);
+}
+]]>
+					</code>
+				</javascript>
+			</method>
+		</type>
+		<namespace name="Collections.Generic">
+			<type name="Dictionary`2">
+				<method name="TryGetValue">
+					<javascript>
+						<code>
+							<![CDATA[
+function(a,b){
+	$set$(b,this[a]);
+	return a in this;
+}
+]]>
+						</code>
+					</javascript>
+				</method>
+			</type>
+		</namespace>
+		<namespace name="Threading">
+			<type name="Thread">
+				<constructor>
+					<parameters>
+						<type name="ThreadStart"/>
+					</parameters>
+					<javascript>
+						<code>{d:$0}</code>
+					</javascript>
+				</constructor>
+				<constructor>
+					<parameters>
+						<type name="ParameterizedThreadStart"/>
+					</parameters>
+					<javascript>
+						<code>{d:$0}</code>
+					</javascript>
+				</constructor>
+				<method name="Sleep">
+					<parameters>
+						<type name="Int32"/>
+					</parameters>
+					<javascript>
+						<opCode value="Sleep"/>
+					</javascript>
+				</method>
+				<method name="Start">
+					<parameters/>
+					<javascript>
+						<code syntax="static">
+							<![CDATA[
+function(a){
+	a.t=$handler$(a.d,a).defer();
+}
+]]>
+						</code>
+					</javascript>
+				</method>
+				<method name="Start">
+					<parameters>
+						<type name="Object"/>
+					</parameters>
+					<javascript>
+						<code syntax="static">
+							<![CDATA[
+function(a,b){
+	a.t=$handler$(a.d,a).curry(b).defer();
+}
+]]>
+						</code>
+					</javascript>
+				</method>
+				<method name="Abort">
+					<parameters/>
+					<javascript>
+						<code syntax="static">
+							<![CDATA[
+function(a){
+	clearTimeout(a.t);
+}
+]]>
+						</code>
+					</javascript>
+				</method>
+			</type>
+		</namespace>
+	</namespace>
+</mapping>
