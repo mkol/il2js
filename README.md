@@ -2,8 +2,8 @@ Part of http://smp.if.uj.edu.pl/~mkol/il2js/ .
 
 ## Framework
 
-Contains source codes for Framework.dll. I will try to move more compiler functionality into this part, after code refactorisation.
+Contains source codes for Framework.dll.
 
 ## Compiler
 
-No sources available (yet, this will probably change after code refactoring). Compiler available at http://smp.if.uj.edu.pl/~mkol/il2js_release/ .
+Contains source codes for il2js.exe compiler.
