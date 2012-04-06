@@ -158,11 +158,14 @@ If following options are not provided, it is assumed that
 );
 			return;
 		}
+		var il2js_js=AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "il2js.js";
+		if(!File.Exists(il2js_js)){
+			Console.Write("generating " + il2js_js+ " ... ");
+			File.WriteAllText(il2js_js, PackCode(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Runtime.js"), false));
+			Console.WriteLine("done");
+		}
 
 		switch (args[0]) {
-			case "--publish":
-				File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "il2js.js", PackCode(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Runtime.js"), false));
-				break;
 			default: {
 					string inputDll = args[0];
 					string outputVirtualPath = "";
